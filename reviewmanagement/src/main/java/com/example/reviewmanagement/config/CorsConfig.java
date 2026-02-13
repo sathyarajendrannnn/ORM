@@ -28,3 +28,7 @@ public class CorsConfig implements WebMvcConfigurer {
                 .exposedHeaders("Authorization", "Content-Type");
     }
 }
+
+git remote add origin https://github.com/sathyarajendrannnn/ORM.git
+git branch -M main
+git push -u origin main
