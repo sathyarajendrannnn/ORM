@@ -48,6 +48,9 @@ public class Review {
     @Column(name = "is_suspected_fake")
     private Boolean isSuspectedFake;
 
+    @Column(name = "is_anonymous")
+    private Boolean isAnonymous;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -57,6 +60,9 @@ public class Review {
         }
         if (isSuspectedFake == null) {
             isSuspectedFake = false;
+        }
+        if (isAnonymous == null) {
+            isAnonymous = false;
         }
     }
 

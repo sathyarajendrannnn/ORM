@@ -49,6 +49,7 @@ public class ReviewService {
         review.setContent(reviewDetails.getContent());
         review.setRating(reviewDetails.getRating());
         review.setProductService(reviewDetails.getProductService());
+        review.setIsAnonymous(reviewDetails.getIsAnonymous());
         review.setStatus("PENDING");
         review = fakeReviewDetectionService.analyzeReview(review);
         

@@ -8,4 +8,5 @@ public class ReviewRequest {
     private String content;
     private Integer rating;
     private String productService;
+    private Boolean isAnonymous;
 }

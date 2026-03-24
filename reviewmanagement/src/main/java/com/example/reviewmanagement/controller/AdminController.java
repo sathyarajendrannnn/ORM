@@ -165,7 +165,10 @@ public class AdminController {
             }
             
             List<Review> pendingReviews = reviewService.getPendingReviews();
-            return ResponseEntity.ok(pendingReviews);
+            List<com.example.reviewmanagement.dto.ReviewResponse> responses = pendingReviews.stream()
+                .map(review -> com.example.reviewmanagement.dto.ReviewResponse.fromReview(review, null))
+                .collect(Collectors.toList());
+            return ResponseEntity.ok(responses);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error: " + e.getMessage());

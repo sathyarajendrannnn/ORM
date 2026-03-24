@@ -1,5 +1,6 @@
 package com.example.reviewmanagement.controller;
 
+import com.example.reviewmanagement.dto.ReviewRequest;    // ✅ ADD THIS IMPORT
 import com.example.reviewmanagement.dto.ReviewResponse;
 import com.example.reviewmanagement.model.Review;
 import com.example.reviewmanagement.model.User;
@@ -16,7 +17,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/reviews")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3003", "http://localhost:5173"}, allowCredentials = "true")
 @RequiredArgsConstructor
 public class ReviewController {
     
@@ -47,6 +47,7 @@ public class ReviewController {
             review.setContent(request.getContent());
             review.setRating(request.getRating());
             review.setProductService(request.getProductService());
+            review.setIsAnonymous(request.getIsAnonymous());
             
             Review savedReview = reviewService.createReview(review, currentUser);
             
@@ -68,20 +69,7 @@ public class ReviewController {
             List<Review> reviews = reviewService.getUserReviews(currentUser);
             
             List<ReviewResponse> responses = reviews.stream()
-                .map(review -> {
-                    ReviewResponse response = new ReviewResponse();
-                    response.setId(review.getId());
-                    response.setTitle(review.getTitle());
-                    response.setContent(review.getContent());
-                    response.setRating(review.getRating());
-                    response.setStatus(review.getStatus());
-                    response.setProductService(review.getProductService());
-                    response.setCreatedAt(review.getCreatedAt());
-                    response.setUpdatedAt(review.getUpdatedAt());
-                    response.setAuthorName(review.getUser().getName());
-                    response.setUserId(review.getUser().getId());
-                    return response;
-                })
+                .map(review -> ReviewResponse.fromReview(review, null))
                 .collect(Collectors.toList());
             
             return ResponseEntity.ok(responses);
@@ -102,21 +90,7 @@ public class ReviewController {
             // Filter out suspected fake reviews for public view
             List<ReviewResponse> responses = reviews.stream()
                 .filter(review -> !Boolean.TRUE.equals(review.getIsSuspectedFake()))
-                .map(review -> {
-                    ReviewResponse response = new ReviewResponse();
-                    response.setId(review.getId());
-                    response.setTitle(review.getTitle());
-                    response.setContent(review.getContent());
-                    response.setRating(review.getRating());
-                    response.setStatus(review.getStatus());
-                    response.setProductService(review.getProductService());
-                    response.setCreatedAt(review.getCreatedAt());
-                    response.setUpdatedAt(review.getUpdatedAt());
-                    response.setAuthorName(review.getUser().getName());
-                    response.setUserId(review.getUser().getId());
-                    // NO fake review data for public
-                    return response;
-                })
+                .map(review -> ReviewResponse.fromReview(review, null))
                 .collect(Collectors.toList());
             
             return ResponseEntity.ok(responses);
@@ -140,6 +114,7 @@ public class ReviewController {
             review.setContent(request.getContent());
             review.setRating(request.getRating());
             review.setProductService(request.getProductService());
+            review.setIsAnonymous(request.getIsAnonymous());
             
             Review updatedReview = reviewService.updateReview(id, review, currentUser);
             

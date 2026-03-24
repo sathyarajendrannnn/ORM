@@ -10,7 +10,8 @@ const EditReview = () => {
     title: '',
     content: '',
     rating: 5,
-    productService: ''
+    productService: '',
+    isAnonymous: false
   });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -30,7 +31,8 @@ const EditReview = () => {
           title: review.title,
           content: review.content,
           rating: review.rating,
-          productService: review.productService
+          productService: review.productService,
+          isAnonymous: review.isAnonymous || false
         });
         setDetection(detectFakeReview(review.content));
       }
@@ -42,10 +44,10 @@ const EditReview = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'rating' ? parseInt(value) : value
+      [name]: type === 'checkbox' ? checked : (name === 'rating' ? parseInt(value) : value)
     }));
 
     if (name === 'content') {
@@ -170,6 +172,20 @@ const EditReview = () => {
                   </p>
                 </div>
               )}
+            </div>
+
+            <div className="flex items-center space-x-2 py-2">
+              <input
+                type="checkbox"
+                id="isAnonymous"
+                name="isAnonymous"
+                checked={formData.isAnonymous}
+                onChange={handleChange}
+                className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+              />
+              <label htmlFor="isAnonymous" className="text-sm font-medium text-gray-700 cursor-pointer">
+                Post as Anonymous (Your name will not be shown publicly)
+              </label>
             </div>
 
             <div className="flex justify-end space-x-4 pt-4">

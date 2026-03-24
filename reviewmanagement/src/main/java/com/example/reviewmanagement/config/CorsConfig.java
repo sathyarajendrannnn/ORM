@@ -8,8 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
-    // Accept comma-separated origins from environment variable FRONTEND_URLS
-    @Value("${FRONTEND_URLS:http://localhost:*}")
+    // Accept comma-separated origins from environment variable
+    @Value("${cors.allowed-origins:http://localhost:3000,http://localhost:3003,http://localhost:5173}")
     private String frontendUrls;
 
     @Override
@@ -29,6 +29,3 @@ public class CorsConfig implements WebMvcConfigurer {
     }
 }
 
-git remote add origin https://github.com/sathyarajendrannnn/ORM.git
-git branch -M main
-git push -u origin main

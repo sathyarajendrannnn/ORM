@@ -19,6 +19,7 @@ public class ReviewResponse {
     private Integer fakeReviewScore;
     private Boolean isSuspectedFake;
     private String riskLevel;
+    private Boolean isAnonymous;
 
     public static ReviewResponse fromReview(Review review, String riskLevel) {
         ReviewResponse response = new ReviewResponse();
@@ -30,11 +31,19 @@ public class ReviewResponse {
         response.setProductService(review.getProductService());
         response.setCreatedAt(review.getCreatedAt());
         response.setUpdatedAt(review.getUpdatedAt());
-        response.setAuthorName(review.getUser().getName());
         response.setUserId(review.getUser().getId());
         response.setFakeReviewScore(review.getFakeReviewScore());
         response.setIsSuspectedFake(review.getIsSuspectedFake());
         response.setRiskLevel(riskLevel);
+        response.setIsAnonymous(review.getIsAnonymous());
+
+        // Mask author name if anonymous
+        if (Boolean.TRUE.equals(review.getIsAnonymous())) {
+            response.setAuthorName("Anonymous");
+        } else {
+            response.setAuthorName(review.getUser().getName());
+        }
+
         return response;
     }
 }
