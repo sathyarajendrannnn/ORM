@@ -6,6 +6,7 @@ A full-stack web application for managing product/service reviews with fake revi
 
 - ✅ User registration and JWT-based authentication
 - ✅ Review submission with real-time fake review detection
+- ✅ **Anonymous Reviews**: Option for users to hide their identity in public posts
 - ✅ Admin dashboard for managing users and moderating reviews
 - ✅ Role-based access control (USER / ADMIN)
 - ✅ CORS-enabled for local development on multiple ports
@@ -189,6 +190,8 @@ Before pushing to GitHub:
    - Database credentials should never be committed
 
 3. 📝 **Documentation**: Keep `README.md` updated with setup instructions
+4. 🚀 **Vercel Deployment**: Use the provided `vercel.json` in the `frontend` directory for SPA routing and API proxying.
+5. 🌐 **Base URL**: Ensure `VITE_API_URL` in the frontend and `FRONTEND_URLS` in the backend are updated to your production domains.
 
 ## Running the Full Stack
 
