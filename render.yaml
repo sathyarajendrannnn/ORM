@@ -1,0 +1,45 @@
+services:
+  # --------------------------------------------
+  # Backend: Spring Boot Application (Docker)
+  # --------------------------------------------
+  - type: web
+    name: review-management-backend
+    env: docker
+    region: oregon # or frankfurt, ohio, singapore
+    rootDir: reviewmanagement
+    dockerfilePath: Dockerfile
+    plan: free
+    autoDeploy: true
+    envVars:
+      # Render dynamically sets PORT. Spring Boot will use it via Dockerfile setup.
+      - key: PORT
+        value: 10000
+      # You can override your Railway DB connection here if needed. 
+      # Since it's in application.properties, it works securely if you don't commit secrets.
+      # If you need to hide DB credentials, add them here instead of properties file.
+      - key: JWT_SECRET
+        sync: false # Set this value manually in the Render dashboard for security!
+      - key: FRONTEND_URLS
+        sync: false # We will update this to the frontend URL once it is deployed.
+
+  # --------------------------------------------
+  # Frontend: React Application (Static Site)
+  # --------------------------------------------
+  - type: web
+    name: review-management-frontend
+    env: static
+    region: oregon
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishPath: dist
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: VITE_API_URL
+        # This will link to the backend's automatically generated Render URL.
+        # Ensure you replace this value with the actual backend URL after deployment.
+        value: "https://review-management-backend.onrender.com/api"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
