@@ -16,19 +16,19 @@ import java.util.List;
 public class UserService implements UserDetailsService {
     
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder passwordEncoder;
     
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
-        
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
-                .password(user.getPassword())
-                .authorities(new java.util.ArrayList<>())
-                .build();
-    }
+public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+    return org.springframework.security.core.userdetails.User.builder()
+            .username(user.getEmail())
+            .password(user.getPassword())
+            .authorities("ROLE_" + user.getRole().name())  // ✅ e.g. "ROLE_ADMIN" or "ROLE_USER"
+            .build();
+}
     
     public User registerUser(String email, String password, String name) {
         if (userRepository.existsByEmail(email)) {
