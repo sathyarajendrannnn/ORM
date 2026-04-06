@@ -1,6 +1,5 @@
 package com.example.reviewmanagement.config;
 
-import com.example.reviewmanagement.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,19 +27,14 @@ import java.util.stream.Collectors;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final UserService userService;
+    // ← removed UserService entirely
 
-    // Must match the value in CorsConfig / application.properties
-    // Set on Render: cors.allowed-origins=http://localhost:5173,https://your-frontend.vercel.app
     @Value("${cors.allowed-origins:http://localhost:3000,http://localhost:3003,http://localhost:5173}")
     private String allowedOrigins;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Explicitly wires YOUR CorsConfigurationSource into Spring Security.
-                // Without this, Spring Security intercepts OPTIONS preflight requests
-                // before CorsConfig.addCorsMappings() runs — causing CORS failures.
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
@@ -51,7 +45,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .userDetailsService(userService)
+                // ← removed .userDetailsService(userService) — Spring finds it automatically
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -61,18 +55,17 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Keep consistent with CorsConfig.java — same origins, same settings
         List<String> origins = Arrays.stream(allowedOrigins.split(","))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
 
-        configuration.setAllowedOriginPatterns(origins); // matches CorsConfig: allowedOriginPatterns
+        configuration.setAllowedOriginPatterns(origins);
         configuration.setAllowedMethods(Arrays.asList(
                 "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"
         ));
-        configuration.setAllowedHeaders(Arrays.asList("*")); // matches CorsConfig: allowedHeaders("*")
-        configuration.setAllowCredentials(true);             // matches CorsConfig: allowCredentials(true)
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
         configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
 
